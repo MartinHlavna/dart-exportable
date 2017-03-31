@@ -277,7 +277,7 @@ class Export {
 
 const jsonProperty = const JsonProperty();
 class JsonProperty {
-  final string name;
+  final String name;
 
   const JsonProperty(this.name);
 }
