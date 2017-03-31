@@ -238,10 +238,15 @@ class Exportable {
     for (VariableMirror declaration in declarations) {
       for (InstanceMirror meta in declaration.metadata) {
         if (meta.reflectee is Export) {
+					JsonProperty annotation = _getAnnotation(declaration, JsonProperty);
+					String name = MirrorSystem.getName(declaration.simpleName);
+					if(annotation != null){
+							name = annotation.name;
+					}
           list.add(new PropertyData(
             type: _getTypeFromVariableMirror(declaration),
             symbol: declaration.simpleName,
-            name: MirrorSystem.getName(declaration.simpleName)
+            name: name
           ));
           break;
         }
@@ -249,6 +254,18 @@ class Exportable {
     }
     return list;
   }
+	static Object _getAnnotation(DeclarationMirror declaration, Type annotation) {
+		for (var instance in declaration.metadata) {
+			if (instance.hasReflectee) {
+				var reflectee = instance.reflectee;
+				if (reflectee.runtimeType == annotation) {
+					return reflectee;
+				}
+			}
+		}
+
+		return null;
+	}
 }
 
 const export = const Export();
@@ -256,6 +273,13 @@ class Export {
   final Type type;
 
   const Export([this.type]);
+}
+
+const jsonProperty = const JsonProperty();
+class JsonProperty {
+  final string name;
+
+  const JsonProperty(this.name);
 }
 
 class PropertyData {
